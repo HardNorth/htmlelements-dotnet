@@ -173,8 +173,10 @@ namespace HtmlElements.Test.Tests.Runner
         {
             CultureInfo myCulture = new CultureInfo(locale);
             Thread.CurrentThread.CurrentCulture = myCulture;
-            CultureInfo.DefaultThreadCurrentCulture = myCulture;
-            CultureInfo.DefaultThreadCurrentUICulture = myCulture;
+
+            // For .Net 4.5 only, will be used when Mono will support .Net 4.5
+            // CultureInfo.DefaultThreadCurrentCulture = myCulture;
+            // CultureInfo.DefaultThreadCurrentUICulture = myCulture;
         }
     }
 

@@ -189,17 +189,17 @@ namespace Yandex.HtmlElements.Utils
             {
                 return null;
             }
-            return type.GenericTypeArguments[0];
+            return type.GetGenericArguments()[0];
         }
 
         public static string GetElementName(FieldInfo field)
         {
-            NameAttribute name = field.GetCustomAttribute<NameAttribute>(false);
+            NameAttribute name = GetCustomAttribute<NameAttribute>(field, false);
             if (name != null)
             {
                 return name.Name;
             }
-            name = field.FieldType.GetCustomAttribute<NameAttribute>(false);
+            name = GetCustomAttribute<NameAttribute>(field.FieldType, false);
             if (name != null)
             {
                 return name.Name;
@@ -209,7 +209,7 @@ namespace Yandex.HtmlElements.Utils
 
         public static string GetElementName(Type type)
         {
-            NameAttribute name = type.GetCustomAttribute<NameAttribute>(false);
+            NameAttribute name = GetCustomAttribute<NameAttribute>(type, false);
             if (name != null)
             {
                 return name.Name;
@@ -224,5 +224,25 @@ namespace Yandex.HtmlElements.Utils
             return Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(separateWords);
         }
 
+
+        private static T GetCustomAttribute<T>(Type type, bool inherit) where T : Attribute
+        {
+            object[] attributes = type.GetCustomAttributes(typeof(T), inherit);
+            if (attributes == null)
+            {
+                return null;
+            }
+            return attributes.Length == 0 ? null : (T)attributes[0];
+        }
+
+        private static T GetCustomAttribute<T>(FieldInfo field, bool inherit) where T : Attribute
+        {
+            object[] attributes = field.GetCustomAttributes(typeof(T), inherit);
+            if (attributes == null)
+            {
+                return null;
+            }
+            return attributes.Length == 0 ? null : (T)attributes[0];
+        }
     }
 }

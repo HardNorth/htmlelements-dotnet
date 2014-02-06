@@ -50,7 +50,7 @@ namespace Yandex.HtmlElements.Loaders.Decorators.ProxyHandlers
 
             try
             {
-                result = element.GetType().GetProperty(binder.Name).GetValue(element);
+                result = element.GetType().GetProperty(binder.Name).GetValue(element, null);
                 return true;
             }
             catch

@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Yandex.HtmlElements</RootNamespace>
     <AssemblyName>HtmlElements-DotNet</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -63,8 +64,8 @@
     <Compile Include="Elements\Radio.cs" />
     <Compile Include="Elements\Select.cs" />
     <Compile Include="Elements\Table.cs" />
-	<Compile Include="Elements\TextBlock.cs" />
-	<Compile Include="Elements\TextInput.cs" />
+    <Compile Include="Elements\TextBlock.cs" />
+    <Compile Include="Elements\TextInput.cs" />
     <Compile Include="Elements\TypifiedElement.cs" />
     <Compile Include="Exceptions\HtmlElementsException.cs" />
     <Compile Include="Loaders\Decorators\HtmlElementTypeAttributesHandler.cs" />

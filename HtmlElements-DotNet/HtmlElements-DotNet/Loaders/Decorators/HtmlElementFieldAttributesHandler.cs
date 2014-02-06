@@ -32,7 +32,7 @@ namespace Yandex.HtmlElements.Loaders.Decorators
 
         private By BuildByFromHtmlElementAttributes(Type type)
         {
-            FindsByAttribute[] findBys = (FindsByAttribute[])Field.GetCustomAttributes(typeof(FindsByAttribute));
+            FindsByAttribute[] findBys = (FindsByAttribute[])Field.GetCustomAttributes(typeof(FindsByAttribute), false);
             if (findBys.Length > 0)
             {
                 return BuildByFromFindsBys(findBys);

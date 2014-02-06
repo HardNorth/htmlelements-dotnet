@@ -53,7 +53,7 @@ namespace Yandex.HtmlElements.PageFactories.Selenium
                 return false;
             }
 
-            Type listType = type.GenericTypeArguments[0];
+            Type listType = type.GetGenericArguments()[0];
 
             if (typeof(IWebElement) != listType)
             {

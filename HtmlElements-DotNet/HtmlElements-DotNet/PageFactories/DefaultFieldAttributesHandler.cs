@@ -26,7 +26,8 @@ namespace Yandex.HtmlElements.PageFactories
 
         public override bool ShouldCache()
         {
-            return field.GetCustomAttribute<CacheLookupAttribute>(false) != null;
+            object[] attributes = field.GetCustomAttributes(typeof(CacheLookupAttribute), false);
+            return attributes != null && attributes.Length > 0;
         }
 
         public override By BuildBy()

@@ -1,6 +1,7 @@
 ﻿using ImpromptuInterface;
 using OpenQA.Selenium;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.Linq;
 using Yandex.HtmlElements.PageFactories.Selenium;
@@ -26,7 +27,7 @@ namespace Yandex.HtmlElements.Loaders.Decorators.ProxyHandlers
 
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
         {
-            IReadOnlyCollection<IWebElement> elements = locator.FindElements();
+            ReadOnlyCollection<IWebElement> elements = locator.FindElements();
 
             try
             {
@@ -42,11 +43,11 @@ namespace Yandex.HtmlElements.Loaders.Decorators.ProxyHandlers
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            IReadOnlyCollection<IWebElement> elements = locator.FindElements();
+            ReadOnlyCollection<IWebElement> elements = locator.FindElements();
 
             try
             {
-                result = elements.GetType().GetProperty(binder.Name).GetValue(elements);
+                result = elements.GetType().GetProperty(binder.Name).GetValue(elements, null);
                 return true;
             }
             catch
@@ -59,7 +60,7 @@ namespace Yandex.HtmlElements.Loaders.Decorators.ProxyHandlers
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
         {
             int index = (int)indexes[0];
-            IReadOnlyCollection<IWebElement> elements = locator.FindElements();
+            ReadOnlyCollection<IWebElement> elements = locator.FindElements();
             try
             {
                 result = elements.ElementAt<IWebElement>(index);

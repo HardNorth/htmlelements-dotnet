@@ -21,7 +21,7 @@ namespace HtmlElements.Test.Browsers
         {
             this.browserType = browserType;
             Func<Browser> factory = this.GetBrowser;
-            browserPool = new ThreadLocal<Browser>(factory, true);
+            browserPool = new ThreadLocal<Browser>(factory);
         }
 
         public Browser Get()
@@ -66,10 +66,6 @@ namespace HtmlElements.Test.Browsers
 
         public void Dispose()
         {
-            foreach (Browser browser in browserPool.Values)
-            {
-                browser.Dispose();
-            }
             browserPool.Dispose();
         }
 
