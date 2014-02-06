@@ -1,15 +1,15 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using HtmlElements.Tests.TestElements;
 using HtmlElements.Tests.TestPages;
 using System.Collections.ObjectModel;
 using Yandex.HtmlElements.Loaders;
 using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace HtmlElements.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class HtmlElementInitializationTest
     {
         private static IWebDriver driver = SearchPage.MockDriver();
@@ -24,7 +24,7 @@ namespace HtmlElements.Tests
             return new SearchArrow[] { createdSearchArrow, populatedSearchArrow };
         }
 
-        [TestMethod]
+        [Test]
         public void WrappedElementOfHtmlElementShouldNotBeNull()
         {
             foreach (SearchArrow element in Data())
@@ -33,7 +33,7 @@ namespace HtmlElements.Tests
             }
         }
 
-        [TestMethod]
+        [Test]
         public void InnerElementsOfHtmlElementShouldNotBeNull()
         {
             foreach (SearchArrow element in Data())
@@ -43,7 +43,7 @@ namespace HtmlElements.Tests
             }
         }
 
-        [TestMethod]
+        [Test]
         public void HtmlElementNameAndToStringMethodShouldBeAsDeclared()
         {
             foreach (SearchArrow element in Data())

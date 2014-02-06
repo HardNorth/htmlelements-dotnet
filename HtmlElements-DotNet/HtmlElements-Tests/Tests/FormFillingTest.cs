@@ -1,14 +1,14 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yandex.HtmlElements.Elements;
 using OpenQA.Selenium;
 using Moq;
 using HtmlElements.Tests.TestElements;
 using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace HtmlElements.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class FormFillingTest
     {
         private const String InputTextToSend = "text";
@@ -18,7 +18,7 @@ namespace HtmlElements.Tests
 
         private MockedForm form;
 
-        [TestInitialize]
+        [SetUp]
         public void fillForm()
         {
             mockedElement = new Mock<IWebElement>();
@@ -36,7 +36,7 @@ namespace HtmlElements.Tests
             form.Fill(data);
         }
 
-        [TestMethod]
+        [Test]
         public void FormFieldsShouldBeFilledCorrectly()
         {
             form.TextInput.Verify(m => m.SendKeys(InputTextToSend));

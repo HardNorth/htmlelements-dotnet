@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using Moq;
 using Yandex.HtmlElements.Attributes;
@@ -7,13 +6,14 @@ using OpenQA.Selenium.Support.PageObjects;
 using Yandex.HtmlElements.Elements;
 using Yandex.HtmlElements.Loaders;
 using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace HtmlElements.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class UsingSelectTest
     {
-        [TestMethod]
+        [Test]
         public void WithSimpleElement()
         {
             Mock<IWebDriver> driver = new Mock<IWebDriver>();
