@@ -66,6 +66,7 @@ namespace HtmlElements.Test.Browsers
 
         public void Dispose()
         {
+            browserPool.Value.Dispose();
             browserPool.Dispose();
         }
 
