@@ -92,14 +92,7 @@
   </Target>
 	-->
 	<Target Name="AfterBuild">
-		<PropertyGroup>
-			<!--TestSuccessOrNot is the property specify whether the Test is sucess or not -->
-			<TestSuccessOrNot>1</TestSuccessOrNot>
-		</PropertyGroup>
-
 		<!--Run nunit-console.exe-->
-		<Exec Command="..\packages\NUnit.Runners.2.6.3\tools\nunit-console.exe bin\$(Configuration)\HtmlElements-Tests.dll" >
-			<Output TaskParameter="ExitCode" PropertyName="TestSuccessOrNot"/>
-		</Exec>
+		<Exec Command="..\packages\NUnit.Runners.2.6.3\tools\nunit-console.exe bin\$(Configuration)\HtmlElements-Tests.dll" />
 	</Target>
 </Project>
