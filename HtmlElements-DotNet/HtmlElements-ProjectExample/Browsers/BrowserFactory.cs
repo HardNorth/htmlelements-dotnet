@@ -11,23 +11,24 @@ namespace HtmlElements.Test.Browsers
 {
     public class BrowserFactory : IDisposable
     {
-        private ThreadLocal<Browser> browserPool;
         private BrowserType browserType;
         private int timeoutSeconds = 10;
         private int pollingInterval = 1000;
         private string profilePath;
+        private volatile Browser browser;
 
         public BrowserFactory(BrowserType browserType)
         {
             this.browserType = browserType;
-            Func<Browser> factory = this.GetBrowser;
-            browserPool = new ThreadLocal<Browser>(factory);
         }
 
         public Browser Get()
         {
-            Browser result = browserPool.Value;
-            return result;
+            if (browser == null)
+            {
+                browser = GetBrowser();
+            }
+            return browser;
         }
 
         private Browser GetBrowser()
@@ -66,8 +67,7 @@ namespace HtmlElements.Test.Browsers
 
         public void Dispose()
         {
-            browserPool.Value.Dispose();
-            browserPool.Dispose();
+            browser.Dispose();
         }
 
         public int LoadTimeout
