@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace HtmlElements.Test.Browsers
 {
-    public class BrowserFactory : IDisposable
+    public class BrowserFactory : IBrowserFactory
     {
         private BrowserType browserType;
         private int timeoutSeconds = 10;

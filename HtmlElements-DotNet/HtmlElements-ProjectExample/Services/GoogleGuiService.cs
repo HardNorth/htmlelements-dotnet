@@ -8,15 +8,15 @@ using System.Threading;
 
 namespace HtmlElements.Test.Services
 {
-    public class GoogleGuiService
+    public class GoogleGuiService : IGoogleGuiService
     {
         private readonly ILog Log = LogManager.GetLogger(typeof(GoogleGuiService));
 
-        private BrowserFactory browserFactory;
+        private IBrowserFactory browserFactory;
         private string baseUrl;
         private MainPage mainPage;
 
-        public GoogleGuiService(BrowserFactory browserFactory)
+        public GoogleGuiService(IBrowserFactory browserFactory)
         {
             this.browserFactory = browserFactory;
         }
