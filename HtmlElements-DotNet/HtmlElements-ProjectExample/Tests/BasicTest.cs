@@ -45,8 +45,6 @@ namespace HtmlElements.Test.Tests
 
     public class ConfigModule : NinjectModule
     {
-        private ConfigurationSection testConfiguration = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = "~/environment.config" }, ConfigurationUserLevel.None).AppSettings;
-
         public override void Load()
         {
             Bind<IBrowserFactory>().To<BrowserFactory>().InSingletonScope()
