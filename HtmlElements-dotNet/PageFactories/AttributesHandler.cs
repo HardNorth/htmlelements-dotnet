@@ -1,7 +1,6 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.PageObjects;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Yandex.HtmlElements.PageFactories

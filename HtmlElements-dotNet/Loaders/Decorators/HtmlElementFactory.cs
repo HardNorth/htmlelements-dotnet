@@ -1,6 +1,5 @@
 ﻿using OpenQA.Selenium;
 using System;
-using System.Collections.Generic;
 using Yandex.HtmlElements.Elements;
 using Yandex.HtmlElements.Exceptions;
 using Yandex.HtmlElements.Loaders.Decorators.ProxyHandlers;

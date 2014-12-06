@@ -1,6 +1,5 @@
 ﻿using ImpromptuInterface;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Internal;
 using System.Dynamic;
 using Yandex.HtmlElements.PageFactories.Selenium;
 
