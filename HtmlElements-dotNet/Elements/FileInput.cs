@@ -18,7 +18,7 @@ namespace Yandex.HtmlElements.Elements
         /// <summary>
         /// Pointing input field to a file.
         /// Use file URI scheme or absolute path for separate files: file://host/path; eg. file://localhost/c:/WINDOWS/clock.avi
-        /// Use Spring.Net notation for embedded resources: assembly://<AssemblyName>/<NameSpace>/<ResourceName>; eg. assembly://HtmlElements-DotNet/Yandex.HtmlElements/TestResource.txt
+        /// Use Spring.Net notation for embedded resources: assembly://[AssemblyName]/[NameSpace]/[ResourceName]; eg. assembly://HtmlElements-DotNet/Yandex.HtmlElements/TestResource.txt
         /// For embedded resources the resource will be unpacked to a temp dir.
         /// </summary>
         /// <param name="fileName"></param>
