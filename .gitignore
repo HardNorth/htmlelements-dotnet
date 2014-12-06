@@ -17,5 +17,9 @@
 obj/
 [Rr]elease*/
 _ReSharper*/
+
 #Ignore downloaded Nuget packages
 packages
+
+#Ignoring NUnit test results
+TestResult.xml
