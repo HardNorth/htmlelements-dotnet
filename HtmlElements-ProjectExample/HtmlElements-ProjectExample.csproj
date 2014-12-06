@@ -133,9 +133,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HtmlElements-DotNet\HtmlElements-DotNet.csproj">
+    <ProjectReference Include="..\HtmlElements-DotNet\HtmlElements-dotNet.csproj">
       <Project>{f8e33c17-149b-488c-8156-cc19ac715b82}</Project>
-      <Name>HtmlElements-DotNet</Name>
+      <Name>HtmlElements-dotNet</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
