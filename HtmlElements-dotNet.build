@@ -171,8 +171,8 @@
 	<target name="test-win" depends="compile-tests" unless="${skip.tests}">
 		<exec program="${dependency.nunit.runners.path}/nunit-console.exe">
 			<arg value="${current.path.tests}/${product.assembly.tests}" />
-			<arg value="/xml=${current.path.tests}/report/${product.assembly}.xml" />
-			<arg value="/framework:${build.platform}" />
+			<arg value="-xml=${current.path.tests}/report/${product.assembly}.xml" />
+			<arg value="-framework:${build.platform}" />
 		</exec>
 	</target>
 
@@ -180,8 +180,8 @@
 		<exec program="${framework::get-runtime-engine(framework::get-target-framework())}">
 			<arg value="${dependency.nunit.runners.path}/nunit-console.exe" />
 			<arg value="${current.path.tests}/${product.assembly.tests}" />
-			<arg value="/xml=${current.path.tests}/report/${product.assembly}.xml" />
-			<arg value="/framework:${build.platform}" />
+			<arg value="-xml=${current.path.tests}/report/${product.assembly}.xml" />
+			<arg value="-framework:${build.platform}" />
 		</exec>
 	</target>
 
