@@ -23,3 +23,6 @@ packages
 
 #Ignoring NUnit test results
 TestResult.xml
+
+#Ignore build directory
+build/
