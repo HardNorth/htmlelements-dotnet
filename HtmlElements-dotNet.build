@@ -149,23 +149,6 @@
 		<mkdir dir="${current.path.tests}/report"/>
 		<call target="test-win" if="${not(string::contains(build.platform, 'mono'))}" />
 		<call target="test-mono" if="${string::contains(build.platform, 'mono')}" />
-		<nunit2>
-			<formatter type="Xml" usefile="true" outputdir="${current.path.tests}/report"/>
-			<test assemblyname="${current.path.tests}/${product.assembly.tests}" appconfig="${current.path.tests}/app.config">
-				<references basedir="${path.base}">
-					<include name="${current.path.build}/${product.assembly}"/>
-					<include name="mscorlib.dll" />
-					<include name="System.dll" />
-					<include name="System.Core.dll" />
-					<include name="${dependency.impromptuinterface.path}/ImpromptuInterface.dll" />
-					<include name="${dependency.moq.path}/Moq.dll"/>
-					<include name="System.Data.dll" />
-					<include name="System.Drawing.dll" />
-					<include name="${dependency.selenium.webdriver.path}/WebDriver.dll" />
-					<include name="${dependency.selenium.support.path}/WebDriver.Support.dll" />
-				</references>
-			</test>
-		</nunit2>
 	</target>
 
 	<target name="test-win" depends="compile-tests" unless="${skip.tests}">
