@@ -41,7 +41,7 @@
 	<property name="build.platform" value="net-4.0" overwrite="true"/>
 	<property name="build.target" value="net-4.0" overwrite="true"/>
 	<property name="build.asminfo" value="SharedAssemblyInfo.cs"/>
-	<property name="build.nuget.path" value=".nuget/NuGet.exe"/>
+	<property name="build.nuget.path" value="${path.base}/.nuget/NuGet.exe"/>
 
 	<property name="skip.tests" value="false" readonly="false" overwrite="false"/>
 
