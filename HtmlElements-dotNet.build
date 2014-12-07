@@ -169,27 +169,34 @@
 	</target>
 
 	<target name="test-win" depends="compile-tests" unless="${skip.tests}">
-		<exec program="${dependency.nunit.runners.path}/nunit-console.exe">
-			<arg value="${current.path.tests}/${product.assembly.tests}" />
+		<exec program="${dependency.nunit.runners.path}/nunit-console.exe" basedir="${path.base}">
 			<arg value="-xml=${current.path.tests}/report/${product.assembly}.xml" />
-			<arg value="-framework:${build.platform}" />
+			<arg value="-framework=${build.platform}" />
+			<arg value="-config=${build.config}" />
+			<arg value="${current.path.tests}/${product.assembly.tests}" />
 		</exec>
 	</target>
 
 	<target name="test-mono" depends="compile-tests" unless="${skip.tests}">
-		<exec program="${framework::get-runtime-engine(framework::get-target-framework())}">
+		<exec program="${framework::get-runtime-engine(framework::get-target-framework())}" basedir="${path.base}">
 			<arg value="${dependency.nunit.runners.path}/nunit-console.exe" />
-			<arg value="${current.path.tests}/${product.assembly.tests}" />
 			<arg value="-xml=${current.path.tests}/report/${product.assembly}.xml" />
-			<arg value="-framework:${build.platform}" />
+			<arg value="-framework=${build.platform}" />
+			<arg value="-config=${build.config}" />
+			<arg value="${current.path.tests}/${product.assembly.tests}" />
 		</exec>
 	</target>
 
 	<target name="compile-tests" depends="nuget-restore-tests" unless="${skip.tests}">
 		<mkdir dir="${current.path.tests}"/>
-		<copy todir="${current.path.tests}">
-			<fileset basedir="${path.src.tests}">
-				<include name="app.config"/>
+		<copy todir="${current.path.tests}" flatten="true">
+			<fileset basedir="${path.base}">
+				<include name="${current.path.build}/${product.assembly}" />
+				<include name="${dependency.moq.path}/Moq.dll" />
+				<include name="${dependency.nunit.framework.path}/nunit.framework.dll" />
+				<include name="${dependency.selenium.webdriver.path}/WebDriver.dll" />
+				<include name="${dependency.selenium.support.path}/WebDriver.Support.dll" />
+				<include name="${dependency.impromptuinterface.path}/ImpromptuInterface.dll" />
 			</fileset>
 		</copy>
 		<csc noconfig="true" nostdlib="true" warnaserror="true" target="library" debug="${build.debug}" optimize="${build.optimize}" define="${build.defines}"
