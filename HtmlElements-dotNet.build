@@ -2,11 +2,12 @@
 <project name="htmlelements-dotnet" default="build">
 
 	<!-- Dependencies -->
-	<property name="dependency.impromptuinterface.path" value="packages/ImpromptuInterface.6.2.2/lib/net40/ImpromptuInterface.dll" overwrite="true"/>
-	<property name="dependency.selenium.support.path" value="packages/Selenium.Support.2.44.0/lib/net40/WebDriver.Support.dll" overwrite="true"/>
-	<property name="dependency.selenium.webdriver.path" value="packages/Selenium.WebDriver.2.44.0/lib/net40/WebDriver.dll" overwrite="true"/>
-	<property name="dependency.nunit.framework.path" value="packages/NUnit.2.6.3/lib/nunit.framework.dll" overwrite="true"/>
-	<property name="dependency.moq.path" value="packages/Moq.4.1.1309.1617/lib/net40/Moq.dll" overwrite="true"/>
+	<property name="dependency.impromptuinterface.path" value="packages/ImpromptuInterface.6.2.2/lib/net40" overwrite="true"/>
+	<property name="dependency.selenium.support.path" value="packages/Selenium.Support.2.44.0/lib/net40" overwrite="true"/>
+	<property name="dependency.selenium.webdriver.path" value="packages/Selenium.WebDriver.2.44.0/lib/net40" overwrite="true"/>
+	<property name="dependency.nunit.framework.path" value="packages/NUnit.2.6.3/lib" overwrite="true"/>
+	<property name="dependency.nunit.runners.path" value="packages/NUnit.Runners.2.6.3/tools" overwrite="true"/>
+	<property name="dependency.moq.path" value="packages/Moq.4.1.1309.1617/lib/net40" overwrite="true"/>
 
 	<!-- All project properties (don't search them in other place) -->
 	<property name="version" value="0.0" overwrite="true"/>
@@ -88,9 +89,9 @@
 			<arg value="packages" />
 		</exec>
 	</target>
-	
+
 	<target name="nuget-restore-mono">
-		<exec program="mono">
+		<exec program="${framework::get-runtime-engine(framework::get-target-framework())}">
 			<arg value="${build.nuget.path}" />
 			<arg value="restore" />
 			<arg value="${nuget.package.dir}/packages.config" />
@@ -98,7 +99,6 @@
 			<arg value="packages" />
 		</exec>
 	</target>
-
 
 	<target name="core" depends="init nuget-restore-product">
 		<csc noconfig="true" warnaserror="true" target="library" debug="${build.debug}" optimize="${build.optimize}" define="${build.defines}" output="${current.path.build}/${product.assembly}" doc="${current.path.build}/${product.docfile}" >
@@ -113,12 +113,12 @@
 				<include name="mscorlib.dll" />
 				<include name="System.dll" />
 				<include name="System.Core.dll" />
-				<include name="${dependency.impromptuinterface.path}" />
+				<include name="${dependency.impromptuinterface.path}/ImpromptuInterface.dll" />
 				<include name="Microsoft.CSharp.dll" />
 				<include name="System.Data.dll" />
 				<include name="System.Drawing.dll" />
-				<include name="${dependency.selenium.webdriver.path}" />
-				<include name="${dependency.selenium.support.path}" />
+				<include name="${dependency.selenium.webdriver.path}/WebDriver.dll" />
+				<include name="${dependency.selenium.support.path}/WebDriver.Support.dll" />
 			</references>
 			<nowarn>
 				<warning number="1591" />
@@ -133,8 +133,8 @@
 		<call target="config-build-${build.config}"/>
 		<call target="config-platform-${build.target}"/>
 
-		<property name="current.path.build" value="${path.build}/${build.platform}/${build.config}"/>
-		<property name="current.path.tests" value="${path.build}/${build.platform}/tests" />
+		<property name="current.path.build" value="${path.build}/${build.config}"/>
+		<property name="current.path.tests" value="${path.build}/tests" />
 
 		<mkdir dir="${current.path.build}" if="${not(directory::exists(current.path.build))}"/>
 
@@ -147,6 +147,8 @@
 
 	<target name="test" depends="compile-tests" unless="${skip.tests}">
 		<mkdir dir="${current.path.tests}/report"/>
+		<call target="test-win" if="${not(string::contains(build.platform, 'mono'))}" />
+		<call target="test-mono" if="${string::contains(build.platform, 'mono')}" />
 		<nunit2>
 			<formatter type="Xml" usefile="true" outputdir="${current.path.tests}/report"/>
 			<test assemblyname="${current.path.tests}/${product.assembly.tests}" appconfig="${current.path.tests}/app.config">
@@ -155,15 +157,32 @@
 					<include name="mscorlib.dll" />
 					<include name="System.dll" />
 					<include name="System.Core.dll" />
-					<include name="${dependency.impromptuinterface.path}" />
-					<include name="${dependency.moq.path}"/>
+					<include name="${dependency.impromptuinterface.path}/ImpromptuInterface.dll" />
+					<include name="${dependency.moq.path}/Moq.dll"/>
 					<include name="System.Data.dll" />
 					<include name="System.Drawing.dll" />
-					<include name="${dependency.selenium.webdriver.path}" />
-					<include name="${dependency.selenium.support.path}" />
+					<include name="${dependency.selenium.webdriver.path}/WebDriver.dll" />
+					<include name="${dependency.selenium.support.path}/WebDriver.Support.dll" />
 				</references>
 			</test>
 		</nunit2>
+	</target>
+
+	<target name="test-win" depends="compile-tests" unless="${skip.tests}">
+		<exec program="${dependency.nunit.runners.path}/nunit-console.exe">
+			<arg value="${current.path.tests}/${product.assembly.tests}" />
+			<arg value="/xml=${current.path.tests}/report/${product.assembly}.xml" />
+			<arg value="/framework:${build.platform}" />
+		</exec>
+	</target>
+
+	<target name="test-mono" depends="compile-tests" unless="${skip.tests}">
+		<exec program="${framework::get-runtime-engine(framework::get-target-framework())}">
+			<arg value="${dependency.nunit.runners.path}/nunit-console.exe" />
+			<arg value="${current.path.tests}/${product.assembly.tests}" />
+			<arg value="/xml=${current.path.tests}/report/${product.assembly}.xml" />
+			<arg value="/framework:${build.platform}" />
+		</exec>
 	</target>
 
 	<target name="compile-tests" depends="nuget-restore-tests" unless="${skip.tests}">
@@ -183,12 +202,12 @@
 				<include name="mscorlib.dll" />
 				<include name="System.dll" />
 				<include name="System.Core.dll" />
-				<include name="${dependency.moq.path}"/>
-				<include name="${dependency.nunit.framework.path}"/>
+				<include name="${dependency.moq.path}/Moq.dll"/>
+				<include name="${dependency.nunit.framework.path}/nunit.framework.dll"/>
 				<include name="System.Data.dll" />
 				<include name="System.Drawing.dll" />
-				<include name="${dependency.selenium.webdriver.path}" />
-				<include name="${dependency.selenium.support.path}" />
+				<include name="${dependency.selenium.webdriver.path}/WebDriver.dll" />
+				<include name="${dependency.selenium.support.path}/WebDriver.Support.dll" />
 			</references>
 			<nowarn>
 				<warning number="0649"/>
@@ -262,13 +281,13 @@
 				<import namespace="System.Runtime.InteropServices"/>
 			</imports>
 			<attributes>
-				<attribute type="AssemblyProductAttribute" value="${product.name}: ${product.description}"/>
-				<attribute type="AssemblyCompanyAttribute" value="${product.company}"/>
-				<attribute type="AssemblyCopyrightAttribute" value="Copyright © ${product.duration} ${product.company} and contributors"/>
-				<attribute type="AssemblyVersionAttribute" value="${build.assemblyversion}"/>
-				<attribute type="AssemblyFileVersionAttribute" value="${build.version}" unless="${build.platform == 'netcf-3.5'}"/>
-				<attribute type="ComVisibleAttribute" value="false"/>
-				<attribute type="CLSCompliantAttribute" value="true" if="${product.clsCompliant}"/>
+				<attribute type="AssemblyProductAttribute" value="${product.name}: ${product.description}" />
+				<attribute type="AssemblyCompanyAttribute" value="${product.company}" />
+				<attribute type="AssemblyCopyrightAttribute" value="Copyright © ${product.duration} ${product.company} and contributors" />
+				<attribute type="AssemblyVersionAttribute" value="${build.assemblyversion}" />
+				<attribute type="AssemblyFileVersionAttribute" value="${build.version}" />
+				<attribute type="ComVisibleAttribute" value="false" />
+				<attribute type="CLSCompliantAttribute" value="true" if="${product.clsCompliant}" />
 			</attributes>
 		</asminfo>
 	</target>
