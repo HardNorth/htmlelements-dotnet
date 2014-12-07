@@ -9,7 +9,14 @@
 	<property name="dependency.nunit.runners.path" value="packages/NUnit.Runners.2.6.3/tools" overwrite="true"/>
 	<property name="dependency.moq.path" value="packages/Moq.4.1.1309.1617/lib/net40" overwrite="true"/>
 
-	<!-- All project properties (don't search them in other place) -->
+	<property name="dependency.impromptuinterface.include" value="${dependency.impromptuinterface.path}/ImpromptuInterface.dll" overwrite="true"/>
+	<property name="dependency.selenium.support.include" value="${dependency.selenium.support.path}/WebDriver.Support.dll" overwrite="true"/>
+	<property name="dependency.selenium.webdriver.include" value="${dependency.selenium.webdriver.path}/WebDriver.dll" overwrite="true"/>
+	<property name="dependency.nunit.framework.include" value="${dependency.nunit.framework.path}/nunit.framework.dll" overwrite="true"/>
+	<property name="dependency.nunit.runners.executable" value="${dependency.nunit.runners.path}/nunit-console.exe" overwrite="true"/>
+	<property name="dependency.moq.include" value="${dependency.moq.path}/Moq.dll" overwrite="true"/>
+
+	<!-- Project properties -->
 	<property name="version" value="0.0" overwrite="true"/>
 	<property name="product.name" value="HtmlElements-dotNet" overwrite="false"/>
 	<property name="product.company" value="Yandex QATools" overwrite="false"/>
@@ -113,12 +120,12 @@
 				<include name="mscorlib.dll" />
 				<include name="System.dll" />
 				<include name="System.Core.dll" />
-				<include name="${dependency.impromptuinterface.path}/ImpromptuInterface.dll" />
+				<include name="${dependency.impromptuinterface.include}" />
 				<include name="Microsoft.CSharp.dll" />
 				<include name="System.Data.dll" />
 				<include name="System.Drawing.dll" />
-				<include name="${dependency.selenium.webdriver.path}/WebDriver.dll" />
-				<include name="${dependency.selenium.support.path}/WebDriver.Support.dll" />
+				<include name="${dependency.selenium.webdriver.include}" />
+				<include name="${dependency.selenium.support.include}" />
 			</references>
 			<nowarn>
 				<warning number="1591" />
@@ -152,7 +159,7 @@
 	</target>
 
 	<target name="test-win" depends="compile-tests" unless="${skip.tests}">
-		<exec program="${dependency.nunit.runners.path}/nunit-console.exe" basedir="${path.base}">
+		<exec program="${dependency.nunit.runners.executable}" basedir="${path.base}">
 			<arg value="-xml=${current.path.tests}/report/${product.assembly}.xml" />
 			<arg value="-framework=${build.platform}" />
 			<arg value="-config=${build.config}" />
@@ -162,7 +169,7 @@
 
 	<target name="test-mono" depends="compile-tests" unless="${skip.tests}">
 		<exec program="${framework::get-runtime-engine(framework::get-target-framework())}" basedir="${path.base}">
-			<arg value="${dependency.nunit.runners.path}/nunit-console.exe" />
+			<arg value="${dependency.nunit.runners.executable}" />
 			<arg value="-xml=${current.path.tests}/report/${product.assembly}.xml" />
 			<arg value="-framework=${build.platform}" />
 			<arg value="-config=${build.config}" />
@@ -175,11 +182,11 @@
 		<copy todir="${current.path.tests}" flatten="true">
 			<fileset basedir="${path.base}">
 				<include name="${current.path.build}/${product.assembly}" />
-				<include name="${dependency.moq.path}/Moq.dll" />
-				<include name="${dependency.nunit.framework.path}/nunit.framework.dll" />
-				<include name="${dependency.selenium.webdriver.path}/WebDriver.dll" />
-				<include name="${dependency.selenium.support.path}/WebDriver.Support.dll" />
-				<include name="${dependency.impromptuinterface.path}/ImpromptuInterface.dll" />
+				<include name="${dependency.moq.include}" />
+				<include name="${dependency.nunit.framework.include}" />
+				<include name="${dependency.selenium.webdriver.include}" />
+				<include name="${dependency.selenium.support.include}" />
+				<include name="${dependency.impromptuinterface.include}" />
 			</fileset>
 		</copy>
 		<csc noconfig="true" nostdlib="true" warnaserror="true" target="library" debug="${build.debug}" optimize="${build.optimize}" define="${build.defines}"
@@ -188,16 +195,16 @@
 				<include name="**/*.cs"/>
 			</sources>
 			<references basedir="${path.base}">
-				<include name="${current.path.build}/${product.assembly}"/>
+				<include name="${current.path.build}/${product.assembly}" />
 				<include name="mscorlib.dll" />
 				<include name="System.dll" />
 				<include name="System.Core.dll" />
-				<include name="${dependency.moq.path}/Moq.dll"/>
-				<include name="${dependency.nunit.framework.path}/nunit.framework.dll"/>
+				<include name="${dependency.moq.include}" />
+				<include name="${dependency.nunit.framework.include}"/>
 				<include name="System.Data.dll" />
 				<include name="System.Drawing.dll" />
-				<include name="${dependency.selenium.webdriver.path}/WebDriver.dll" />
-				<include name="${dependency.selenium.support.path}/WebDriver.Support.dll" />
+				<include name="${dependency.selenium.webdriver.include}" />
+				<include name="${dependency.selenium.support.include}" />
 			</references>
 			<nowarn>
 				<warning number="0649"/>
