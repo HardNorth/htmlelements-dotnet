@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="htmlelements-dotnet" default="build">
+
+	<!-- Dependencies -->
+	<property name="dependency.impromptuinterface.path" value="packages/ImpromptuInterface.6.2.2/lib/net40/ImpromptuInterface.dll" overwrite="true"/>
+	<property name="dependency.selenium.support.path" value="packages/Selenium.Support.2.44.0/lib/net40/WebDriver.Support.dll" overwrite="true"/>
+	<property name="dependency.selenium.webdriver.path" value="packages/Selenium.WebDriver.2.44.0/lib/net40/WebDriver.dll" overwrite="true"/>
+	<property name="dependency.nunit.framework.path" value="packages/NUnit.2.6.3/lib/nunit.framework.dll" overwrite="true"/>
+	<property name="dependency.moq.path" value="packages/Moq.4.1.1309.1617/lib/net40/Moq.dll" overwrite="true"/>
+
+	<!-- All project properties (don't search them in other place) -->
+	<property name="version" value="0.0" overwrite="true"/>
+	<property name="product.name" value="HtmlElements-dotNet" overwrite="false"/>
+	<property name="product.company" value="Yandex QATools" overwrite="false"/>
+	<property name="product.description" value="WebDriver PageObject extension for .NET" overwrite="false"/>
+	<property name="product.duration" value="2012" overwrite="false" />
+	<property name="product.platforms" value="net-4.5,net-4.0-client,net-4.5,net-4.0_medium_trust,net-4.5_medium_trust,mono-4.0"  overwrite="false"/>
+	<property name="product.buildserverPlatforms" value="net-4.0-client,net-4.0_medium_trust,mono-4.0"  overwrite="false"/>
+	<property name="product.docfile" value="${product.name}.xml" overwrite="false"/>
+	<property name="product.keyfile" value="${product.name}.snk" overwrite="false"/>
+	<property name="dependencies" value=""	overwrite="false"/>
+
+	<property name="path.base" value="${project::get-base-directory()}"/>
+	<property name="path.build" value="${path.base}/build" dynamic="true"/>
+	<property name="path.dist" value="${path.base}/dist" dynamic="true"/>
+	<property name="path.src.product" value="${path.base}/HtmlElements-DotNet" dynamic="true"/>
+	<property name="path.src.tests" value="${path.base}/HtmlElements-Tests" dynamic="true"/>
+	<property name="path.packages" value="${path.base}/packages" dynamic="true"/>
+	<property name="path.build.assemblyinfo" value="${path.src.product}/Properties/AssemblyInfo.cs" dynamic="true"/>
+
+	<property name="product.assembly" value="${product.name}.dll" overwrite="false"/>
+	<property name="product.assembly.tests" value="HtmlElements-Tests.dll" overwrite="false"/>
+
+	<property name="version.useZero" value="${not(nuget.publish)}" dynamic="true"/>
+	<property name="version.major" value="${version::get-major(version::parse(version))}" dynamic="true"/>
+	<property name="version.minor" value="${version::get-minor(version::parse(version))}" dynamic="true"/>
+	<property name="version.build" value="${version::get-build(version::parse(version))}" dynamic="true"/>
+	<property name="version.revision" value="${version::get-revision(version::parse(version))}" dynamic="true"/>
+	<property name="version.prerelease" value="" dynamic="true"/>
+	<property name="build.version" value="${version.major}.${version.minor}.${version.build}.${version.revision}" dynamic="true"/>
+	<property name="build.assemblyversion" value="${version.major}.${version.minor}.0.0" dynamic="true"/>
+	<property name="build.config" value="debug" overwrite="false"/>
+	<property name="build.platform" value="net-4.0" overwrite="true"/>
+	<property name="build.target" value="net-4.0" overwrite="false"/>
+	<property name="build.asminfo" value="SharedAssemblyInfo.cs"/>
+	<property name="build.nuget.path" value=".nuget/NuGet.exe"/>
+	<!-- <property name="build.platform" value="nmono-4.0" overwrite="true"/>
+	<property name="build.target" value="mono-4.0" overwrite="false"/> -->
+
+	<property name="skip.tests" value="false" readonly="false" overwrite="false"/>
+
+	<target name="build" depends="all"/>
+	<target name="all" depends="core test"/>
+
+	<target name="clean">
+		<delete dir="${path.build}" if="${directory::exists(path.build)}"/>
+		<delete dir="${path.dist}" if="${directory::exists(path.dist)}"/>
+	</target>
+
+	<target name="config-build-debug">
+		<property name="build.debug" value="true"/>
+		<property name="build.optimize" value="false" overwrite="false"/>
+		<property name="global.build.defines" value="DEBUG,TRACE"/>
+	</target>
+
+	<target name="config-build-release">
+		<property name="build.debug" value="PdbOnly"/>
+		<property name="build.optimize" value="true" overwrite="false"/>
+		<property name="global.build.defines" value="TRACE,STRONG"/>
+	</target>
+
+	<target name="nuget-restore-product">
+		<property name="nuget.package.dir" value="${path.src.product}" />
+		<call target="nuget-restore" />
+	</target>
+
+	<target name="nuget-restore-tests">
+		<property name="nuget.package.dir" value="${path.src.tests}" />
+		<call target="nuget-restore" />
+	</target>
+
+	<target name="nuget-restore">
+		<exec program="${path.base}/${build.nuget.path}">
+			<arg value="restore" />
+			<arg value="${nuget.package.dir}/packages.config" />
+			<arg value="-PackagesDirectory" />
+			<arg value="packages" />
+		</exec>
+	</target>
+
+
+	<target name="core" depends="init nuget-restore-product">
+		<csc noconfig="true" warnaserror="true" target="library" debug="${build.debug}" optimize="${build.optimize}" define="${build.defines}" output="${current.path.build}/${product.assembly}" doc="${current.path.build}/${product.docfile}" >
+			<arg line="/filealign:512"/>
+			<arg value="-sdk:2" if="${string::contains(build.platform, 'mono-3.5')}"/>
+			<arg value="-sdk:4" if="${string::contains(build.platform, 'mono-4.0')}"/>
+			<sources basedir="${path.src.product}">
+				<include name="${build.asminfo}"/>
+				<include name="**/*.cs"/>
+			</sources>
+			<references>
+				<include name="mscorlib.dll" />
+				<include name="System.dll" />
+				<include name="System.Core.dll" />
+				<include name="${dependency.impromptuinterface.path}" />
+				<include name="Microsoft.CSharp.dll" />
+				<include name="System.Data.dll" />
+				<include name="System.Drawing.dll" />
+				<include name="${dependency.selenium.webdriver.path}" />
+				<include name="${dependency.selenium.support.path}" />
+			</references>
+			<nowarn>
+				<warning number="1591" />
+			</nowarn>
+		</csc>
+	</target>
+
+	<target name="init">
+		<mkdir dir="${path.build}" if="${not(directory::exists(path.build))}"/>
+		<mkdir dir="${path.dist}" if="${not(directory::exists(path.dist))}"/>
+
+		<call target="config-build-${build.config}"/>
+		<call target="config-platform-${build.target}"/>
+
+		<property name="current.path.build" value="${path.build}/${build.platform}/${build.config}"/>
+		<property name="current.path.tests" value="${path.build}/${build.platform}/tests" />
+
+		<mkdir dir="${current.path.build}" if="${not(directory::exists(current.path.build))}"/>
+
+		<copy todir="${current.path.build}">
+			<fileset basedir="${path.base}">
+				<include name="LICENSE"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="test" depends="compile-tests" unless="${skip.tests}">
+		<mkdir dir="${current.path.tests}/report"/>
+		<nunit2>
+			<formatter type="Xml" usefile="true" outputdir="${current.path.tests}/report"/>
+			<test assemblyname="${current.path.tests}/${product.assembly.tests}" appconfig="${current.path.tests}/app.config">
+				<references basedir="${path.base}">
+					<include name="${current.path.build}/${product.assembly}"/>
+					<include name="mscorlib.dll" />
+					<include name="System.dll" />
+					<include name="System.Core.dll" />
+					<include name="${dependency.impromptuinterface.path}" />
+					<include name="${dependency.moq.path}"/>
+					<include name="System.Data.dll" />
+					<include name="System.Drawing.dll" />
+					<include name="${dependency.selenium.webdriver.path}" />
+					<include name="${dependency.selenium.support.path}" />
+				</references>
+			</test>
+		</nunit2>
+	</target>
+
+	<target name="compile-tests" depends="nuget-restore-tests" unless="${skip.tests}">
+		<mkdir dir="${current.path.tests}"/>
+		<copy todir="${current.path.tests}">
+			<fileset basedir="${path.src.tests}">
+				<include name="app.config"/>
+			</fileset>
+		</copy>
+		<csc noconfig="true" nostdlib="true" warnaserror="true" target="library" debug="${build.debug}" optimize="${build.optimize}" define="${build.defines}"
+		 output="${current.path.tests}/${product.assembly.tests}">
+			<sources basedir="${path.src.tests}">
+				<include name="**/*.cs"/>
+			</sources>
+			<references basedir="${path.base}">
+				<include name="${current.path.build}/${product.assembly}"/>
+				<include name="mscorlib.dll" />
+				<include name="System.dll" />
+				<include name="System.Core.dll" />
+				<include name="${dependency.moq.path}"/>
+				<include name="${dependency.nunit.framework.path}"/>
+				<include name="System.Data.dll" />
+				<include name="System.Drawing.dll" />
+				<include name="${dependency.selenium.webdriver.path}" />
+				<include name="${dependency.selenium.support.path}" />
+			</references>
+			<nowarn>
+				<warning number="0649"/>
+			</nowarn>
+		</csc>
+	</target>
+
+	<target name="config-platform-net-4.0-client">
+		<property name="nant.settings.currentframework" value="net-4.0-client"/>
+		<property name="build.defines" value="${global.build.defines},NET,NET_40,NO_PARTIAL_TRUST"/>
+		<property name="nuget.platform" value="net40"/>
+		<property name="nuget.add" value="true"/>
+		<property name="build.platform" value="net-4.0" overwrite="true"/>
+	</target>
+
+	<target name="config-platform-net-4.0">
+		<property name="nant.settings.currentframework" value="net-4.0"/>
+		<property name="build.defines" value="${global.build.defines},NET,NET_40,NO_PARTIAL_TRUST"/>
+		<property name="nuget.platform" value="net40-full"/>
+		<property name="nuget.add" value="true"/>
+		<property name="build.platform" value="net-4.0" overwrite="true"/>
+	</target>
+
+	<target name="config-platform-net-4.0_medium_trust">
+		<property name="nant.settings.currentframework" value="net-4.0-client"/>
+		<property name="build.defines" value="${global.build.defines},NET,NET_40,MEDIUM_TRUST,NO_PARTIAL_TRUST"/>
+		<property name="nuget.add" value="false"/>
+		<property name="build.platform" value="net-4.0_medium_trust" overwrite="true"/>
+	</target>
+
+	<target name="config-platform-net-4.5-client">
+		<property name="nant.settings.currentframework" value="net-4.5-client"/>
+		<property name="build.defines" value="${global.build.defines},NET,NET_45,NO_PARTIAL_TRUST"/>
+		<property name="nuget.platform" value="net45"/>
+		<property name="nuget.add" value="true"/>
+		<property name="build.platform" value="net-4.5" overwrite="true"/>
+	</target>
+
+	<target name="config-platform-net-4.5_medium_trust">
+		<property name="nant.settings.currentframework" value="net-4.5"/>
+		<property name="build.defines" value="${global.build.defines},NET,NET_45,MEDIUM_TRUST,NO_PARTIAL_TRUST"/>
+		<property name="nuget.add" value="false"/>
+		<property name="build.platform" value="net-4.5_medium_trust" overwrite="true"/>
+	</target>
+
+	<target name="config-platform-net-4.5">
+		<property name="nant.settings.currentframework" value="net-4.5"/>
+		<property name="build.defines" value="${global.build.defines},NET,NET_45,NO_PARTIAL_TRUST"/>
+		<property name="nuget.platform" value="net45-full"/>
+		<property name="nuget.add" value="true"/>
+		<property name="build.platform" value="net-4.5" overwrite="true"/>
+	</target>
+
+	<target name="config-platform-mono-4.0">
+		<property name="nant.settings.currentframework" value="mono-4.0"/>
+		<property name="build.defines" value="${global.build.defines},NET,NET_40,MONO,MONO_40,NO_GENERIC_MOQ" />
+		<property name="nuget.add" value="false"/>
+		<property name="build.platform" value="mono-4.0" overwrite="true"/>
+	</target>
+
+	<target name="create-assembly-info" depends="init">
+		<echo message="##teamcity[buildNumber '${build.version}']" />
+		<echo message="Assembly Version: '${build.assemblyversion}'" />
+		<echo message="Build Platform: '${build.platform}'" />
+		<echo message="Prerelease: '${version.prerelease}'" />
+
+		<asminfo output="${path.build.assemblyinfo}" language="CSharp">
+			<imports>
+				<import namespace="System"/>
+				<import namespace="System.Reflection"/>
+				<import namespace="System.Runtime.InteropServices"/>
+			</imports>
+			<attributes>
+				<attribute type="AssemblyProductAttribute" value="${product.name}: ${product.description}"/>
+				<attribute type="AssemblyCompanyAttribute" value="${product.company}"/>
+				<attribute type="AssemblyCopyrightAttribute" value="Copyright © ${product.duration} ${product.company} and contributors"/>
+				<attribute type="AssemblyVersionAttribute" value="${build.assemblyversion}"/>
+				<attribute type="AssemblyFileVersionAttribute" value="${build.version}" unless="${build.platform == 'netcf-3.5'}"/>
+				<attribute type="ComVisibleAttribute" value="false"/>
+				<attribute type="CLSCompliantAttribute" value="true" if="${product.clsCompliant}"/>
+			</attributes>
+		</asminfo>
+	</target>
+</project>
