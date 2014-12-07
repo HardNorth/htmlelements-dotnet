@@ -76,7 +76,9 @@
 	</target>
 
 	<target name="nuget-restore">
-		<exec program="${build.nuget.path}">
+		<property name="nuget.exec" value="${build.nuget.path}" />
+		<property name="nuget.exec" value="mono ${build.nuget.path}" if="${string::contains(build.platform, 'mono')}" />
+		<exec program="${nuget.exec}">
 			<arg value="restore" />
 			<arg value="${nuget.package.dir}/packages.config" />
 			<arg value="-PackagesDirectory" />
