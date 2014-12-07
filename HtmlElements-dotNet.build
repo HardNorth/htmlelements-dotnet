@@ -17,7 +17,6 @@
 	<property name="product.platforms" value="net-4.5,net-4.0-client,net-4.5,net-4.0_medium_trust,net-4.5_medium_trust,mono-4.0"  overwrite="false"/>
 	<property name="product.buildserverPlatforms" value="net-4.0-client,net-4.0_medium_trust,mono-4.0"  overwrite="false"/>
 	<property name="product.docfile" value="${product.name}.xml" overwrite="false"/>
-	<property name="product.keyfile" value="${product.name}.snk" overwrite="false"/>
 
 	<property name="path.base" value="${project::get-base-directory()}"/>
 	<property name="path.build" value="${path.base}/build" dynamic="true"/>
@@ -77,7 +76,7 @@
 	</target>
 
 	<target name="nuget-restore">
-		<exec program="${path.base}/${build.nuget.path}">
+		<exec program="${build.nuget.path}">
 			<arg value="restore" />
 			<arg value="${nuget.package.dir}/packages.config" />
 			<arg value="-PackagesDirectory" />
