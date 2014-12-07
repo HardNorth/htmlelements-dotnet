@@ -21,7 +21,7 @@
 	<property name="path.base" value="${project::get-base-directory()}"/>
 	<property name="path.build" value="${path.base}/build" dynamic="true"/>
 	<property name="path.dist" value="${path.base}/dist" dynamic="true"/>
-	<property name="path.src.product" value="${path.base}/HtmlElements-DotNet" dynamic="true"/>
+	<property name="path.src.product" value="${path.base}/${product.name}" dynamic="true"/>
 	<property name="path.src.tests" value="${path.base}/HtmlElements-Tests" dynamic="true"/>
 	<property name="path.packages" value="${path.base}/packages" dynamic="true"/>
 	<property name="path.build.assemblyinfo" value="${path.src.product}/Properties/AssemblyInfo.cs" dynamic="true"/>
