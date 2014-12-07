@@ -18,7 +18,6 @@
 	<property name="product.buildserverPlatforms" value="net-4.0-client,net-4.0_medium_trust,mono-4.0"  overwrite="false"/>
 	<property name="product.docfile" value="${product.name}.xml" overwrite="false"/>
 	<property name="product.keyfile" value="${product.name}.snk" overwrite="false"/>
-	<property name="dependencies" value=""	overwrite="false"/>
 
 	<property name="path.base" value="${project::get-base-directory()}"/>
 	<property name="path.build" value="${path.base}/build" dynamic="true"/>
@@ -41,11 +40,9 @@
 	<property name="build.assemblyversion" value="${version.major}.${version.minor}.0.0" dynamic="true"/>
 	<property name="build.config" value="debug" overwrite="false"/>
 	<property name="build.platform" value="net-4.0" overwrite="true"/>
-	<property name="build.target" value="net-4.0" overwrite="false"/>
+	<property name="build.target" value="net-4.0" overwrite="true"/>
 	<property name="build.asminfo" value="SharedAssemblyInfo.cs"/>
 	<property name="build.nuget.path" value=".nuget/NuGet.exe"/>
-	<!-- <property name="build.platform" value="nmono-4.0" overwrite="true"/>
-	<property name="build.target" value="mono-4.0" overwrite="false"/> -->
 
 	<property name="skip.tests" value="false" readonly="false" overwrite="false"/>
 
