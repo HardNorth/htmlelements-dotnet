@@ -71,6 +71,11 @@ namespace HtmlElements.Test.Browsers
             }
         }
 
+        public IWebDriver Driver
+        {
+            get { return driver; }
+        }
+
         internal bool IsOnScreen(IScreen screen)
         {
             foreach (By identity in screen.Identities)

@@ -8,17 +8,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HtmlElements.Test.Services.GoogleScreens
+namespace HtmlElements.Test.Services.YandexScreens
 {
-    [Identity("XPath://*[@name='btnK']")]
+    [Identity("XPath://a[contains(text(),'About Yandex')]")]
     public class MainPage : BasicSearchScreen, IMainScreen
     {
         private Uri baseUrl;
 
-        [FindsBy(How = How.XPath, Using = "//*[@name='q']")]
+        [FindsBy(How = How.CssSelector, Using = "input[name=text]")]
         private IWebElement searchField;
 
-        [FindsBy(How = How.XPath, Using = "//*[@name='btnK']")]
+        [FindsBy(How = How.CssSelector, Using = "button[type=submit]")]
         private IWebElement searchButon;
 
         public MainPage(Browser browser, string baseUrl)

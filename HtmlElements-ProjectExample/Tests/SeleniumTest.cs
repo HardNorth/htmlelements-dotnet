@@ -8,17 +8,17 @@ using System.Text;
 
 namespace HtmlElements.Test.Tests
 {
-    public class SeleniumTest : BasicTest
+    public class SeleniumTest : BaseTest
     {
         private readonly ILog _log = LogManager.GetLogger(typeof(SeleniumTest));
 
-        protected IGoogleGuiService googleService;
+        protected IYandexGuiService guiService;
 
-        public IGoogleGuiService GoogleService
+        public IYandexGuiService GuiService
         {
             set
             {
-                googleService = value;
+                guiService = value;
             }
         }
 

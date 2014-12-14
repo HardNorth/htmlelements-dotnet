@@ -11,8 +11,8 @@
     <Setting Name="browser_type" Type="HtmlElements.Test.Browsers.BrowserType" Scope="User">
       <Value Profile="(Default)">Firefox</Value>
     </Setting>
-    <Setting Name="google_service_baseurl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://www.google.com</Value>
+    <Setting Name="yandex_service_baseurl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://www.yandex.com</Value>
     </Setting>
   </Settings>
 </SettingsFile>
