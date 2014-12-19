@@ -11,7 +11,7 @@ namespace HtmlElements.Test.Services.YandexScreens
     [Identity("Xpath://span[@class='copyright__name'][contains(text(),'Yandex')]")]
     public class SearchPage : BasicSearchScreen
     {
-        [FindsBy(How = How.XPath, Using = "//div[contains(@class,'serp-list')]/div/div")]
+        [FindsBy(How = How.XPath, Using = "//div[contains(@class,'serp-list')]/div[contains(@class,'serp-block')]/div")]
         public IList<IWebElement> allResults;
 
         public SearchPage(Browser browser)
@@ -31,8 +31,7 @@ namespace HtmlElements.Test.Services.YandexScreens
             foreach (IWebElement searchResult in allResults)
             {
                 IWebElement element = searchResult.FindElement(By.XPath(".//h2/a"));
-                result.Add(
-                    element.GetAttribute("href"));
+                result.Add(element.GetAttribute("href"));
             }
             return result;
         }
