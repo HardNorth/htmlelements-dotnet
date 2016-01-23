@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="htmlelements-dotnet">
+
+	<!-- While task implementation -->
+	<script language="C#" prefix="directory">
+		<code>
+			<![CDATA[
+[TaskName("while")]
+public class WhileTask : TaskContainer
+{
+    private TaskContainer _doStuff;
+    private string _propertyName;
+    private string _equals;
+    private string _notEquals;
+
+    [BuildElement("do")]
+    public TaskContainer StuffToDo
+    {
+        get
+        {
+            return this._doStuff;
+        }
+        set
+        {
+            this._doStuff = value;
+        }
+    }
+
+    [TaskAttribute("property")]
+    public string PropertyName
+    {
+        get
+        {
+            return this._propertyName;
+        }
+        set
+        {
+            this._propertyName = value;
+        }
+    }
+
+    [TaskAttribute("equals")]
+    public string Equals
+    {
+        get
+        {
+            return this._equals;
+        }
+        set
+        {
+            this._equals = value;
+        }
+    }
+
+    [TaskAttribute("notequals")]
+    public string NotEquals
+    {
+        get
+        {
+            return this._notEquals;
+        }
+        set
+        {
+            this._notEquals = value;
+        }
+    }
+
+    protected override void ExecuteTask()
+    {
+        while (this.IsTrue())
+        {
+            this._doStuff.Execute();
+        }
+    }
+
+    private bool IsTrue()
+    {
+      if (!string.IsNullOrEmpty(this.Equals))
+      {
+          return this.Properties[this.PropertyName] == this.Equals;
+      }
+      return this.Properties[this.PropertyName] != this.NotEquals;
+    }
+}
+    ]]>
+		</code>
+	</script>
+</project>

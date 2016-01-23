@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="htmlelements-dotnet" default="build">
 
+	<include buildfile="HtmlElements-dotNet.include" />
+
 	<!-- Dependencies -->
 	<property name="dependency.impromptuinterface.path" value="packages/ImpromptuInterface.6.2.2/lib/net40" overwrite="true"/>
 	<property name="dependency.selenium.support.path" value="packages/Selenium.Support.2.44.0/lib/net40" overwrite="true"/>
@@ -176,6 +178,8 @@
 			<arg value="${current.path.tests}/${product.assembly.tests}" />
 		</exec>
 	</target>
+	
+	
 
 	<target name="compile-tests" depends="nuget-restore-tests" unless="${skip.tests}">
 		<mkdir dir="${current.path.tests}"/>
