@@ -24,8 +24,6 @@
 	<property name="product.company" value="Yandex QATools" overwrite="false"/>
 	<property name="product.description" value="WebDriver PageObject extension for .NET" overwrite="false"/>
 	<property name="product.duration" value="2012" overwrite="false" />
-	<property name="product.platforms" value="net-4.5,net-4.0-client,net-4.5,net-4.0_medium_trust,net-4.5_medium_trust,mono-4.0"  overwrite="false"/>
-	<property name="product.buildserverPlatforms" value="net-4.0-client,net-4.0_medium_trust,mono-4.0"  overwrite="false"/>
 	<property name="product.docfile" value="${product.name}.xml" overwrite="false"/>
 
 	<property name="path.base" value="${project::get-base-directory()}"/>
@@ -35,27 +33,31 @@
 	<property name="path.src.tests" value="${path.base}/HtmlElements-Tests" dynamic="true"/>
 	<property name="path.packages" value="${path.base}/packages" dynamic="true"/>
 	<property name="path.build.assemblyinfo" value="${path.src.product}/Properties/AssemblyInfo.cs" dynamic="true"/>
+	<property name="path.tools.nuget" value="${path.base}/.nuget/NuGet.exe"/>
 
 	<property name="product.assembly" value="${product.name}.dll" overwrite="false"/>
 	<property name="product.assembly.tests" value="HtmlElements-Tests.dll" overwrite="false"/>
+	<property name="product.clsCompliant" value="true" overwrite="false"/>
+
+	<property name="nuget.apiKey" value="" overwrite="false"/>
+	<property name="nuget.publish" value="true" overwrite="false"/>
 
 	<property name="version.useZero" value="${not(nuget.publish)}" dynamic="true"/>
-	<property name="version.major" value="${version::get-major(version::parse(version))}" dynamic="true"/>
-	<property name="version.minor" value="${version::get-minor(version::parse(version))}" dynamic="true"/>
-	<property name="version.build" value="${version::get-build(version::parse(version))}" dynamic="true"/>
-	<property name="version.revision" value="${version::get-revision(version::parse(version))}" dynamic="true"/>
-	<property name="version.prerelease" value="" dynamic="true"/>
-	<property name="build.version" value="${version.major}.${version.minor}.${version.build}.${version.revision}" dynamic="true"/>
-	<property name="build.assemblyversion" value="${version.major}.${version.minor}.0.0" dynamic="true"/>
+	<property name="version.major" value="1" dynamic="true"/>
+	<property name="version.minor" value="0" dynamic="true"/>
+	<property name="version.build" value="0" dynamic="true"/>
+	<property name="build.version" value="${version.major}.${version.minor}.${version.build}" dynamic="true"/>
+	<property name="build.assemblyversion" value="${version.major}.${version.minor}.0" dynamic="true"/>
 	<property name="build.config" value="debug" overwrite="false"/>
 	<property name="build.platform" value="net-4.0" overwrite="true"/>
 	<property name="build.target" value="net-4.0" overwrite="true"/>
 	<property name="build.asminfo" value="SharedAssemblyInfo.cs"/>
-	<property name="build.nuget.path" value="${path.base}/.nuget/NuGet.exe"/>
+
 
 	<property name="skip.tests" value="false" readonly="false" overwrite="false"/>
 
 	<target name="build" depends="all"/>
+	<target name="package" depends="package-bin" />
 	<target name="all" depends="core test"/>
 
 	<target name="clean">
@@ -91,7 +93,7 @@
 	</target>
 
 	<target name="nuget-restore-win">
-		<exec program="${build.nuget.path}">
+		<exec program="${path.tools.nuget}">
 			<arg value="restore" />
 			<arg value="${nuget.package.dir}/packages.config" />
 			<arg value="-PackagesDirectory" />
@@ -101,7 +103,7 @@
 
 	<target name="nuget-restore-mono">
 		<exec program="${framework::get-runtime-engine(framework::get-target-framework())}">
-			<arg value="${build.nuget.path}" />
+			<arg value="${path.tools.nuget}" />
 			<arg value="restore" />
 			<arg value="${nuget.package.dir}/packages.config" />
 			<arg value="-PackagesDirectory" />
@@ -122,12 +124,12 @@
 				<include name="mscorlib.dll" />
 				<include name="System.dll" />
 				<include name="System.Core.dll" />
-				<include name="${dependency.impromptuinterface.include}" />
 				<include name="Microsoft.CSharp.dll" />
 				<include name="System.Data.dll" />
 				<include name="System.Drawing.dll" />
 				<include name="${dependency.selenium.webdriver.include}" />
 				<include name="${dependency.selenium.support.include}" />
+				<include name="${dependency.impromptuinterface.include}" />
 			</references>
 			<nowarn>
 				<warning number="1591" />
@@ -137,7 +139,6 @@
 
 	<target name="init">
 		<mkdir dir="${path.build}" if="${not(directory::exists(path.build))}"/>
-		<mkdir dir="${path.dist}" if="${not(directory::exists(path.dist))}"/>
 
 		<call target="config-build-${build.config}"/>
 		<call target="config-platform-${build.target}"/>
@@ -178,8 +179,8 @@
 			<arg value="${current.path.tests}/${product.assembly.tests}" />
 		</exec>
 	</target>
-	
-	
+
+
 
 	<target name="compile-tests" depends="nuget-restore-tests" unless="${skip.tests}">
 		<mkdir dir="${current.path.tests}"/>
@@ -216,48 +217,18 @@
 		</csc>
 	</target>
 
-	<target name="config-platform-net-4.0-client">
-		<property name="nant.settings.currentframework" value="net-4.0-client"/>
+	<target name="config-platform-net-4.0">
+		<property name="nant.settings.currentframework" value="net-4.0"/>
 		<property name="build.defines" value="${global.build.defines},NET,NET_40,NO_PARTIAL_TRUST"/>
 		<property name="nuget.platform" value="net40"/>
 		<property name="nuget.add" value="true"/>
 		<property name="build.platform" value="net-4.0" overwrite="true"/>
 	</target>
 
-	<target name="config-platform-net-4.0">
-		<property name="nant.settings.currentframework" value="net-4.0"/>
-		<property name="build.defines" value="${global.build.defines},NET,NET_40,NO_PARTIAL_TRUST"/>
-		<property name="nuget.platform" value="net40-full"/>
-		<property name="nuget.add" value="true"/>
-		<property name="build.platform" value="net-4.0" overwrite="true"/>
-	</target>
-
-	<target name="config-platform-net-4.0_medium_trust">
-		<property name="nant.settings.currentframework" value="net-4.0-client"/>
-		<property name="build.defines" value="${global.build.defines},NET,NET_40,MEDIUM_TRUST,NO_PARTIAL_TRUST"/>
-		<property name="nuget.add" value="false"/>
-		<property name="build.platform" value="net-4.0_medium_trust" overwrite="true"/>
-	</target>
-
-	<target name="config-platform-net-4.5-client">
-		<property name="nant.settings.currentframework" value="net-4.5-client"/>
-		<property name="build.defines" value="${global.build.defines},NET,NET_45,NO_PARTIAL_TRUST"/>
-		<property name="nuget.platform" value="net45"/>
-		<property name="nuget.add" value="true"/>
-		<property name="build.platform" value="net-4.5" overwrite="true"/>
-	</target>
-
-	<target name="config-platform-net-4.5_medium_trust">
-		<property name="nant.settings.currentframework" value="net-4.5"/>
-		<property name="build.defines" value="${global.build.defines},NET,NET_45,MEDIUM_TRUST,NO_PARTIAL_TRUST"/>
-		<property name="nuget.add" value="false"/>
-		<property name="build.platform" value="net-4.5_medium_trust" overwrite="true"/>
-	</target>
-
 	<target name="config-platform-net-4.5">
 		<property name="nant.settings.currentframework" value="net-4.5"/>
 		<property name="build.defines" value="${global.build.defines},NET,NET_45,NO_PARTIAL_TRUST"/>
-		<property name="nuget.platform" value="net45-full"/>
+		<property name="nuget.platform" value="net45"/>
 		<property name="nuget.add" value="true"/>
 		<property name="build.platform" value="net-4.5" overwrite="true"/>
 	</target>
@@ -270,10 +241,9 @@
 	</target>
 
 	<target name="create-assembly-info" depends="init">
-		<echo message="##teamcity[buildNumber '${build.version}']" />
+		<echo message="Build Number: '${build.version}'" />
 		<echo message="Assembly Version: '${build.assemblyversion}'" />
 		<echo message="Build Platform: '${build.platform}'" />
-		<echo message="Prerelease: '${version.prerelease}'" />
 
 		<asminfo output="${path.build.assemblyinfo}" language="CSharp">
 			<imports>
@@ -291,5 +261,92 @@
 				<attribute type="CLSCompliantAttribute" value="true" if="${product.clsCompliant}" />
 			</attributes>
 		</asminfo>
+	</target>
+
+	<target name="package-bin" depends="create-assembly-info all">
+		<mkdir dir="${path.dist}" if="${not(directory::exists(path.dist))}"/>
+		<zip zipfile="${path.dist}\${product.name}-${build.version}-${build.config}-${build.platform}.zip" ziplevel="9">
+			<fileset basedir="${current.path.build}">
+				<include name="**/*.*"/>
+			</fileset>
+		</zip>
+	</target>
+
+	<target name="nuget">
+		<property name="nuget.sourcedir" value="${path.base}/nuget" />
+		<property name="nuget.basedir" value="${path.base}/build/nuget" />
+		<property name="nuget.symbol.basedir" value="${path.base}/build/nuget_symbol" />
+		<property name="nuget.name" value="${product.name}" />
+		<property name="nuget.project" value="${path.src.product}/${product.name}.csproj" />
+		<property name="nuget.releaseDirectory" value="${path.build}\release" dynamic="true"/>
+		<property name="nuget.additionalFiles" value="-" />
+		<property name="nuget.packageName" value="${nuget.name}" />	
+		<property name="nuget.platform" value="${build.platform}"/>
+		<call target="nuget-run"/>
+	</target>
+
+	<target name="nuget-run" description="Copies the nuget output to the top bin directory">
+		<delete dir="${nuget.basedir}"/>
+		<if test="${not(nuget.symbol.basedir == '')}">
+			<!-- unless does not work on delete -->
+			<delete dir="${nuget.symbol.basedir}"/>
+		</if>
+
+		<property name="nuget.version" value="${build.version}"/>
+
+		<call target="config-build-${build.config}"/>
+		<call target="config-platform-${nuget.platform}"/>
+		<copy overwrite="false" todir="${nuget.basedir}\lib\${nuget.platform}" flatten="true" if="${nuget.add}">
+			<fileset basedir="${nuget.releaseDirectory}">
+				<include name="${nuget.name}.dll" />
+				<include name="${nuget.name}.xml" />
+				<include name="${nuget.name}.pdb" />
+				<include name="${nuget.additionalFiles}" unless="${nuget.additionalFiles == '-'}"/>
+			</fileset>
+		</copy>
+
+		<copy overwrite="false" todir="${nuget.basedir}">
+			<fileset basedir="${nuget.sourcedir}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<echo message="Build Version: ${nuget.version}"/>
+		<xmlpoke file="${nuget.basedir}/${nuget.name}.nuspec" xpath="//package/nu:metadata/nu:version" value="${nuget.version}">
+			<namespaces>
+				<namespace prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance" />
+				<namespace prefix="xsd" uri="http://www.w3.org/2001/XMLSchema" />
+				<namespace prefix="nu" uri="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd" />
+			</namespaces>
+		</xmlpoke>
+
+		<exec program="${path.tools.nuget}" workingdir="${nuget.basedir}" commandline="pack ${nuget.basedir}\${nuget.name}.nuspec -Exclude **\*.pdb" />
+		<move todir="${path.dist}\NuGet\">
+			<fileset basedir="${nuget.basedir}">
+				<include name="*.nupkg" />
+			</fileset>
+		</move>
+
+		<exec program="${path.tools.nuget}" workingdir="${nuget.basedir}" commandline="pack ${nuget.basedir}\${nuget.name}.nuspec" />
+		<if test="${not(nuget.project == '')}">
+			<exec program="${path.tools.nuget}" workingdir="${nuget.basedir}" commandline="pack ${nuget.project} -symbols" />
+			<unzip zipfile="${nuget.basedir}\${nuget.packageName}.${nuget.version}.nupkg" todir="${nuget.symbol.basedir}/target"/>
+			<unzip zipfile="${nuget.basedir}\${nuget.packageName}.${version.major}.${version.minor}.0.0.symbols.nupkg" todir="${nuget.symbol.basedir}/source"/>
+			<copy overwrite="false" todir="${nuget.symbol.basedir}/target">
+				<fileset basedir="${nuget.symbol.basedir}/source">
+					<include name="[Content_Types].xml" />
+					<include name="src/**" />
+				</fileset>
+			</copy>
+			<zip zipfile="${path.dist}\NuGet\${nuget.packageName}.${nuget.version}.symbols.nupkg">
+				<fileset basedir="${nuget.symbol.basedir}/target">
+					<include name="**"/>
+				</fileset>
+			</zip>
+		</if>
+		<if test="${not(nuget.apiKey == '') and nuget.publish}">
+			<echo message="Publish to nuget.org" />
+			<exec program="${path.tools.nuget}" workingdir="${path.dist}\NuGet\" commandline="push ${nuget.packageName}.${nuget.version}.nupkg ${nuget.apiKey} -NonInteractive" failonerror="false"/>
+		</if>
 	</target>
 </project>
